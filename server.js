@@ -1,6 +1,6 @@
-const express = require('express');
-const mysql = require('mysql2');
-const inputCheck = require('./utils/inputCheck');
+const express = require("express");
+const mysql = require("mysql2");
+const inputCheck = require("./utils/inputCheck");
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -11,18 +11,18 @@ app.use(express.json());
 // Connect to database
 const db = mysql.createConnection(
   {
-    host: 'localhost',
+    host: "localhost",
     // Your MySQL username,
-    user: 'root',
+    user: "root",
     // Your MySQL password
-    password: 'uS!djqs8bdubfcD',
-    database: 'election'
+    password: "uS!djqs8bdubfcD",
+    database: "election",
   },
-  console.log('Connected to the election database.')
+  console.log("Connected to the election database.")
 );
 
 // Get all candidates
-app.get('/api/candidates', (req, res) => {
+app.get("/api/candidates", (req, res) => {
   const sql = `SELECT * FROM candidates`;
 
   db.query(sql, (err, rows) => {
@@ -31,14 +31,15 @@ app.get('/api/candidates', (req, res) => {
       return;
     }
     res.json({
-      message: 'success',
-      data: rows
+      message: "success",
+      data: rows,
     });
   });
 });
 
 // Get a single candidate
-app.get('/api/candidate/:id', (req, res) => {
+// using the get method with an endpoint of "ID"
+app.get("/api/candidate/:id", (req, res) => {
   const sql = `SELECT * FROM candidates WHERE id = ?`;
   const params = [req.params.id];
 
@@ -48,14 +49,14 @@ app.get('/api/candidate/:id', (req, res) => {
       return;
     }
     res.json({
-      message: 'success',
-      data: row
+      message: "success",
+      data: row,
     });
   });
 });
 
 // Delete a candidate
-app.delete('/api/candidate/:id', (req, res) => {
+app.delete("/api/candidate/:id", (req, res) => {
   const sql = `DELETE FROM candidates WHERE id = ?`;
   const params = [req.params.id];
 
@@ -64,25 +65,26 @@ app.delete('/api/candidate/:id', (req, res) => {
       res.statusMessage(400).json({ error: res.message });
     } else if (!result.affectedRows) {
       res.json({
-        message: 'Candidate not found'
+        message: "Candidate not found",
       });
     } else {
       res.json({
-        message: 'deleted',
+        message: "deleted",
         changes: result.affectedRows,
-        id: req.params.id
+        id: req.params.id,
       });
     }
   });
 });
 
 // Create a candidate
-app.post('/api/candidate', ({ body }, res) => {
+// object destructuring to pull body property out of the object
+app.post("/api/candidate", ({ body }, res) => {
   const errors = inputCheck(
     body,
-    'first_name',
-    'last_name',
-    'industry_connected'
+    "first_name",
+    "last_name",
+    "industry_connected"
   );
   if (errors) {
     res.status(400).json({ error: errors });
@@ -99,8 +101,8 @@ app.post('/api/candidate', ({ body }, res) => {
       return;
     }
     res.json({
-      message: 'success',
-      data: body
+      message: "success",
+      data: body,
     });
   });
 });
